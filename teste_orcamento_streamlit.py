@@ -5,9 +5,9 @@ import plotly.express as px
 
 st.set_page_config(page_title="Análise de Orçamento", layout="wide")
 
-sheets = pd.read_excel("./Projeto Orçamento/Planilha Orçamento 24-25(valendo).xlsx", sheet_name=None)
-orcado = pd.read_excel("./Projeto Orçamento/Orçado23-24.xlsx", sheet_name="Manutenção")
-realizado = pd.read_excel("./Projeto Orçamento/Realizado23-24.xlsx")
+sheets = pd.read_excel("Planilha Orçamento 24-25(valendo).xlsx", sheet_name=None)
+orcado = pd.read_excel("Orçado23-24.xlsx", sheet_name="Manutenção")
+realizado = pd.read_excel("Realizado23-24.xlsx")
 
 df_clone_orcado = orcado.loc[:, ['Safra', 'Dt. Mvto', 'Dt.Vcto', 'Doc.Num.', 'Histórico', 'Débito', 'Cliente/Fornecedor']]
 realizado.columns = realizado.iloc[1]
