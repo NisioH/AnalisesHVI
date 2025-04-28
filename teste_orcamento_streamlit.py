@@ -2,21 +2,19 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Configuração da página
+
 st.set_page_config(page_title="Análise de Orçamento", layout="wide")
 
-# Carregamento das planilhas
 sheets = pd.read_excel("./Projeto Orçamento/Planilha Orçamento 24-25(valendo).xlsx", sheet_name=None)
 orcado = pd.read_excel("./Projeto Orçamento/Orçado23-24.xlsx", sheet_name="Manutenção")
 realizado = pd.read_excel("./Projeto Orçamento/Realizado23-24.xlsx")
 
-# Ajustes nos DataFrames
 df_clone_orcado = orcado.loc[:, ['Safra', 'Dt. Mvto', 'Dt.Vcto', 'Doc.Num.', 'Histórico', 'Débito', 'Cliente/Fornecedor']]
 realizado.columns = realizado.iloc[1]
 realizado.drop([0, 1], inplace=True)
 df_clone_realizado = realizado.loc[:, ['Safra', 'Doc.Num.', 'Produto', 'Data Uso', 'Total', 'Valor Médio', 'Valor Total', ]]
 
-# Processamento das planilhas
+
 for sheet_name, df in sheets.items():
     if sheet_name == "Revisões":
         sheets[sheet_name] = df.drop(index=0, errors="ignore")
@@ -27,7 +25,7 @@ for sheet_name, df in sheets.items():
         else:
             sheets[sheet_name] = pd.DataFrame()
 
-# Sidebar para seleção de gráfico
+
 st.sidebar.title("Análise de Orçamento")
 selecao = st.sidebar.selectbox(
     "Selecione um gráfico:", 
@@ -35,7 +33,7 @@ selecao = st.sidebar.selectbox(
 )
 
 if selecao:
-    # Criando o gráfico
+  
     df_filtrado = sheets["Revisões"][sheets["Revisões"]["Descrição"] == selecao]
     df_grafico = df_filtrado.melt(id_vars=["Descrição"], var_name="Meses", value_name="Valores")
     df_grafico = df_grafico[~df_grafico["Meses"].isin(["Quantidade", "VALOR TOTAL"])]
@@ -59,15 +57,14 @@ if selecao:
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Filtrando tabelas com os dados completos e somatórios
+
     df_orcado_filtrado = df_clone_orcado[df_clone_orcado["Doc.Num."].isin(df_filtrado["Descrição"])]
     df_realizado_filtrado = df_clone_realizado[df_clone_realizado["Doc.Num."].isin(df_filtrado["Descrição"])]
 
-    # Garantindo que as colunas são numéricas antes do somatório
     df_orcado_filtrado["Débito"] = pd.to_numeric(df_orcado_filtrado["Débito"], errors="coerce")
     df_realizado_filtrado["Valor Total"] = pd.to_numeric(df_realizado_filtrado["Valor Total"], errors="coerce")
 
-    # Adicionando linha de somatório
+  
     total_orcado = df_orcado_filtrado.copy()
     total_orcado.loc["Total"] = total_orcado.select_dtypes(include=['number']).sum()
     total_orcado.loc["Total", "Doc.Num."] = "TOTAL"
@@ -76,16 +73,16 @@ if selecao:
     total_realizado.loc["Total"] = total_realizado.select_dtypes(include=['number']).sum()
     total_realizado.loc["Total", "Doc.Num."] = "TOTAL"
 
-    # Substituindo "None" por células vazias
+   
     total_orcado.fillna("", inplace=True)
     total_realizado.fillna("", inplace=True)
 
-    # Formatando valores monetários
+   
     def formatar_moeda(valor):
         try:
             return f"R$ {float(valor):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         except ValueError:
-            return valor  # Retorna o valor original se não puder ser convertido para número
+            return valor  
 
     for coluna in ["Débito"]:
         if coluna in total_orcado.columns:
@@ -95,7 +92,7 @@ if selecao:
         if coluna in total_realizado.columns:
             total_realizado[coluna] = total_realizado[coluna].apply(lambda x: formatar_moeda(x) if pd.notna(x) else "")
 
-    # Tabela do gráfico formatada
+   
     df_tabela = sheets.get(selecao, pd.DataFrame())
 
     def formatar_valores(valor, coluna):
