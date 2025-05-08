@@ -7,7 +7,7 @@ st.set_page_config(page_title="Análise de Orçamento", layout="wide")
 
 sheets = pd.read_excel("Planilha Orçamento 24-25.xlsx", sheet_name=None)
 orcado = pd.read_excel("Orçado23-24.xlsx", sheet_name="Manutenção")
-realizado = pd.read_excel("Realizado23-24.xlsx")
+realizado = pd.read_excel("Realizado23-24-08Mai2025.xlsx")
 
 df_clone_orcado = orcado.loc[:, ['Safra', 'Dt. Mvto', 'Dt.Vcto', 'Doc.Num.', 'Histórico', 'Débito', 'Cliente/Fornecedor']]
 realizado.columns = realizado.iloc[1]
