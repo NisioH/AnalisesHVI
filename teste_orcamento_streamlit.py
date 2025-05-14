@@ -12,7 +12,8 @@ realizado = pd.read_excel("Realizado23-24-08Mai2025.xlsx")
 df_clone_orcado = orcado.loc[:, ['Safra', 'Dt. Mvto', 'Dt.Vcto', 'Doc.Num.', 'Histórico', 'Débito', 'Cliente/Fornecedor']]
 realizado.columns = realizado.iloc[1]
 realizado.drop([0, 1], inplace=True)
-df_clone_realizado = realizado.loc[:, ['Safra', 'Doc.Num.', 'Produto', 'Data Uso', 'Total', 'Valor Médio', 'Valor Total', ]]
+df_clone_realizado = realizado.loc[:, ['Safra', 'Doc.Num.', 'Produto', 'Data Uso', 'Total', 'Valor Médio', 'Valor Total']]
+df_clone_realizado['Valor Total'] = pd.to_numeric(df_clone_realizado['Valor Total'], errors='coerce').round(2)
 
 
 for sheet_name, df in sheets.items():
