@@ -3,6 +3,6 @@ __pycache__/
 *.env
 .venv
 venv/
-* Hvi_retorno/
+Hvi_retorno
 *.xlsx
 
