@@ -4,5 +4,7 @@ __pycache__/
 .venv
 venv/
 Hvi_retorno
-*.xlsx
-
+analise_intervalos.xlsx
+buscaLona.xlsx
+valores_restantes.xlsx
+verificaPendentes.xlsx
