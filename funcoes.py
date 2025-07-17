@@ -48,7 +48,7 @@ class Funcoes:
     
 
     @staticmethod
-    def mic_fora_padrao_resistencia(df_clone):
+    def mic_fora_padrao_boa_resistencia(df_clone):
 
         Mic_fora_padrao_resistencia = (df_clone['Mic_fora_padrao'] == True) & (df_clone['baixa_resistencia'] == False)
         Mic_fora_padrao_resistencia = df_clone.loc[Mic_fora_padrao_resistencia, ['Tp.Visual', 'UN']]
@@ -70,7 +70,7 @@ class Funcoes:
 
     
     @staticmethod
-    def mic_padrao_resistencia(df_clone):
+    def mic_padrao_boa_resistencia(df_clone):
         
         Mic_padrao_resistencia = (df_clone['Mic_fora_padrao'] == False) & (df_clone['baixa_resistencia'] == False)
         Mic_padrao_resistencia = df_clone.loc[Mic_padrao_resistencia, ['Tp.Visual', 'UN']]
