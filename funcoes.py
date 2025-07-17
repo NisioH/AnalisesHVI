@@ -89,3 +89,30 @@ class Funcoes:
             else:  # apenas um UN
                 print(f"{un_grupo.name}\t{un_grupo}")
             print()
+    
+
+    @staticmethod
+    def mic_fora_padrao_variedade(df_clone):
+
+        # Filtra as variedades das amostras que estão fora do padrão de Micronaire.
+
+        Mic_fora_padrao_variedade = (df_clone['Mic_fora_padrao'] == True)
+        Mic_fora_padrao_variedade = df_clone.loc[Mic_fora_padrao_variedade, ['Variedade']]
+                                                 
+        totais_por_visual = Mic_fora_padrao_variedade['Variedade'].value_counts()
+        print(totais_por_visual)
+    
+
+    @staticmethod
+    def mic_padrao_variedade(df_clone):
+        # Filtra as variedades das amostras que estão dentro do padrão de Micronaire.
+
+        Mic_padrao_variedade = (df_clone['Mic_fora_padrao'] == False)
+        Mic_padrao_variedade = df_clone.loc[Mic_padrao_variedade, ['Variedade']]
+                                                 
+        totais_por_visual = Mic_padrao_variedade['Variedade'].value_counts()
+        print(totais_por_visual)
+
+       
+
+            
