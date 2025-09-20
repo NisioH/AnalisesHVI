@@ -5,26 +5,38 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import datetime
 
-classifica = pd.read_excel('/home/nisiohelande/Documents/Teste-Apresentação.xlsx')
+@st.cache_data
+def carregar_dados(caminho_arquivo):
+    """Carrega os dados do arquivo Excel e retorna um DataFrame.  Usa cache para melhorar o desempenho."""
+    try:
+        classifica = pd.read_excel('/home/nisiohelande/Documents/Teste-Apresentação.xlsx')
+        classifica.columns = classifica.iloc[1]
+        classifica.drop([0, 1], inplace=True)
 
-
-classifica.columns = classifica.iloc[1]
-classifica.drop([0, 1], inplace=True)
-
-
-df_clone = pd.DataFrame(classifica.loc[:, ['Número', 'Bloco', 'Talhão', 'Data Benef', 'Tipo',  'Variedade']])
-df_clone['Data Benef'] = pd.to_datetime(df_clone['Data Benef'], format='%d/%m/%Y', errors="coerce")
+        df_clone = pd.DataFrame(
+            classifica.loc[:, ['Número', 'Bloco', 'Talhão', 'Data Benef', 'Tipo', 'Peso', 'Variedade']])
+        df_clone['Data Benef'] = pd.to_datetime(df_clone['Data Benef'], format='%d/%m/%Y', errors="coerce")
+        return df_clone
+    except FileNotFoundError:
+        st.error("Arquivo Excel não encontrado. Verifique o caminho.")
+        st.stop()  # Para a execução do script
+    except Exception as e:
+        st.exception(f"Erro ao ler o arquivo Excel: {e}")
+        st.stop()  # Para a execução do script
 
 
 st.title("Visualizador de Produção")
 
+df_clone = carregar_dados()
 # Seleção de período com Streamlit
 col1, col2 = st.columns(2)
 with col1:
-    data_inicio = st.date_input("Data de Início", value=datetime.date(2024, 1, 1))
+    data_inicio = st.date_input("Data de Início", value=datetime.date(2025, 7, 1))
 with col2:
-    data_fim = st.date_input("Data de Fim", value=datetime.date(2024, 1, 31))
+    data_fim = st.date_input("Data de Fim", value=datetime.date(2025, 7, 31))
 
+tipos_unicos = df_clone['Tipo'].unique()
+tipo_selecionado = st.selectbox("Selecione o Tipo", tipos_unicos)
 
 # Converter datas para o formato necessário para o Pandas
 data_inicio = pd.to_datetime(data_inicio)
@@ -32,15 +44,22 @@ data_fim = pd.to_datetime(data_fim)
 
 #Verificação das datas
 if data_inicio > data_fim:
-    st.error("Data de início deve ser anterior à data de fim.")
+    st.error("A data de início deve ser anterior à data de fim.")
 else:
-    df_filtrado = df[(df['Data Benef'] >= data_inicio) & (df['Data Benef'] <= data_fim)]
+    if 'Data Benef' not in df_clone.columns:
+        st.error("A coluna 'Data Benef' não existe no arquivo.")
+    elif 'Tipo' not in df_clone.columns:
+        st.error("A coluna 'Tipo' não existe no arquivo.")
+    elif 'Peso' not in df_clone.columns:
+        st.error("A coluna 'Peso' não existe no arquivo.")
+    else:
+        df_filtrado = df_clone[(df_clone['Data Benef'] >= data_inicio) & (df_clone['Data Benef'] <= data_fim) & (df_clone['Tipo'] == tipo_selecionado)]
     if not df_filtrado.empty:
         df_agrupado = df_filtrado.groupby(['Data Benef', 'Tipo'])['Peso'].agg(['sum', 'count']).reset_index()
         df_agrupado.columns = ['Data Benef', 'Tipo', 'Peso Total', 'Quantidade']
 
         #Criando os gráficos
-        st.subheader("Peso Total por Tipo")
+        st.subheader(f"Peso Total e Quantidade para o Tipo: {tipo_selecionado}")
         fig, ax = plt.subplots(figsize=(12, 6))
         sns.lineplot(x='Data Benef', y='Peso Total', hue='Tipo', data=df_agrupado, ax=ax)
         plt.xticks(rotation=45)
