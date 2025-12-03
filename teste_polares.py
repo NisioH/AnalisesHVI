@@ -4,7 +4,7 @@ from typing import List
 
 
 input_path = r'C:\Users\fazin\OneDrive\Documents\Nisio\Cargas Pendentes\CargasPendentes 24-25\verificaPendentes.xlsx'
-out_path = r'C:\Users\fazin\OneDrive\Documents\Nisio\Cargas Pendentes\CargasPendentes 24-25\11 - Novembro\valores_restantes.xlsx'
+out_path = r'C:\Users\fazin\OneDrive\Documents\Nisio\Cargas Pendentes\CargasPendentes 24-25\12 - Dezembro\valores_restantes.xlsx'
 
 df_pd = pd.read_excel(input_path)
 classifica = pl.from_pandas(df_pd)
